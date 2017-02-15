@@ -16,13 +16,19 @@ import org.seckill.exception.SeckillException;
 import org.seckill.service.SeckillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+@Service
 public class SeckillServiceImpl implements SeckillService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@Autowired
 	private SeckillDao seckillDao;
 
+	@Autowired
 	private SuccessKilledDao successKilledDao;
 
 	private final String slat = "jfiw uiefdksajfiuab87182731dksajf";
@@ -60,9 +66,10 @@ public class SeckillServiceImpl implements SeckillService {
 	}
 
 	@Override
+	@Transactional
 	public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
 			throws SeckillException, RepeatKillException, SeckillCloseException {
-		if (null == md5 || md5.equals(getMD5(seckillId))) {
+		if (null == md5 || !md5.equals(getMD5(seckillId))) {
 			throw new SeckillException("seckill data rewrite");
 		}
 		try {
